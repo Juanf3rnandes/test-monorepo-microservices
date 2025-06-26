@@ -16,6 +16,10 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
+  it('should be defined', () => {
+    expect(app).toBeDefined();
+  });
+
   it('/ (GET)', () => {
     return request(app.getHttpServer())
       .get('/')
