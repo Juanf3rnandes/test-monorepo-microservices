@@ -29,7 +29,6 @@ blocks:
       epilogue:
         always:
           commands:
-            - artifact push job build.log
             - cache store node-modules-$(checksum package-lock.json) node_modules
             - cache store turbo-cache-$(checksum turbo.json) .turbo
 
