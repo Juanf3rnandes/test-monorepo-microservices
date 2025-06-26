@@ -6,27 +6,22 @@ agent:
     type: e1-standard-2
     os_image: ubuntu2204
 
-# Cache para node_modules e turbo
-global:
-  env_vars:
-    - name: TURBO_API
-      value: "<opcional: se usar Remote Caching>"
-  secrets:
-    - name: npm_token
-
-  prologue:
-    commands:
-      - checkout
-      - cache restore node-modules-$(checksum package-lock.json)
-      - cache restore turbo-cache-$(checksum turbo.json)
-
-      # Instalação de dependências
-      - npm ci
-      - npx turbo prune --scope=web --docker
-
 blocks:
-  - name: Build
+  - name: Setup
     task:
+      env_vars:
+        - name: TURBO_API
+          value: "<opcional: se usar Remote Caching>"
+      secrets:
+        - name: npm_token
+      prologue:
+        commands:
+          - checkout
+          - cache restore node-modules-$(checksum package-lock.json)
+          - cache restore turbo-cache-$(checksum turbo.json)
+          - npm ci
+          - npx turbo prune --scope=web --docker
+
       jobs:
         - name: Build
           commands:
@@ -41,14 +36,18 @@ blocks:
   - name: Test
     task:
       jobs:
-        - name: run tests
+        - name: Run tests
           commands:
+            - checkout
+            - cache restore node-modules-$(checksum package-lock.json)
             - npx turbo run test --filter=...[HEAD^] --cache-dir=.turbo
 
+promotions:
   - name: Deploy
-    run:
-      when:
+    pipeline_file: deploy.yml
+    auto_promote_on:
+      - result: passed
         branch:
           - main
-          - stage
           - dev
+          - stage
