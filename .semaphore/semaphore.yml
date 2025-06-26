@@ -3,8 +3,8 @@ name: Turborepo CI
 
 agent:
   machine:
-    type: e1-standard-2
-    os_image: ubuntu2204
+    type: e2-standard
+    os_image: ubuntu2004
 
 blocks:
   - name: Setup
