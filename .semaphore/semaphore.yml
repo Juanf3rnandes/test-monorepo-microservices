@@ -9,6 +9,10 @@ agent:
 blocks:
   - name: Setup
     task:
+      when:
+        event:
+          - pull_request
+          - push
       env_vars:
         - name: TURBO_API
           value: "<opcional: se usar Remote Caching>"
@@ -33,6 +37,10 @@ blocks:
 
   - name: Test
     task:
+      when:
+        event:
+          - pull_request
+          - push
       jobs:
         - name: Run tests
           commands:
