@@ -3,7 +3,6 @@ name: Turborepo CI
 
 agent:
   machine:
-    type: e2-standard
     os_image: ubuntu2204
 
 blocks:
