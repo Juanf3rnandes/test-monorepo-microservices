@@ -25,11 +25,13 @@ blocks:
       jobs:
         - name: Build
           commands:
+            - set -x
             - npx turbo run build --cache-dir=.turbo
 
       epilogue:
         always:
           commands:
+            - artifact push job build.log
             - cache store node-modules-$(checksum package-lock.json) node_modules
             - cache store turbo-cache-$(checksum turbo.json) .turbo
 
@@ -38,6 +40,7 @@ blocks:
       jobs:
         - name: Run tests
           commands:
+            - set -x
             - checkout
             - cache restore node-modules-$(checksum package-lock.json)
             - npx turbo run test --filter=...[HEAD^] --cache-dir=.turbo
