@@ -18,7 +18,6 @@ blocks:
           - cache restore node-modules-$(checksum package-lock.json)
           - cache restore turbo-cache-$(checksum turbo.json)
           - npm ci
-          - npx turbo prune --scope=web --docker
 
       jobs:
         - name: Build
