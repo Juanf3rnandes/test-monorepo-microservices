@@ -1,0 +1,54 @@
+version: v1.0
+name: Turborepo CI
+
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu2204
+
+# Cache para node_modules e turbo
+global:
+  env_vars:
+    - name: TURBO_API
+      value: "<opcional: se usar Remote Caching>"
+  secrets:
+    - name: npm_token
+
+  prologue:
+    commands:
+      - checkout
+      - cache restore node-modules-$(checksum package-lock.json)
+      - cache restore turbo-cache-$(checksum turbo.json)
+
+      # Instalação de dependências
+      - npm ci
+      - npx turbo prune --scope=web --docker
+
+blocks:
+  - name: Build
+    task:
+      jobs:
+        - name: Build
+          commands:
+            - npx turbo run build --cache-dir=.turbo
+
+      epilogue:
+        always:
+          commands:
+            - cache store node-modules-$(checksum package-lock.json) node_modules
+            - cache store turbo-cache-$(checksum turbo.json) .turbo
+
+  - name: Test
+    task:
+      jobs:
+        - name: run tests
+          commands:
+            - npx turbo run test --filter=...[HEAD^] --cache-dir=.turbo
+
+  - name: Deploy
+    run:
+      when:
+        branch:
+          - main
+          - stage
+          - dev
