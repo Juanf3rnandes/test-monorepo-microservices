@@ -24,7 +24,7 @@ blocks:
         - name: Build
           commands:
             - set -x
-            - npx turbo run build --cache-dir=.turbo
+            - npx turbo run build --cache-dir=.turbo > build.log 2>&1
 
       epilogue:
         always:
@@ -42,13 +42,3 @@ blocks:
             - checkout
             - cache restore node-modules-$(checksum package-lock.json)
             - npx turbo run test --filter=...[HEAD^] --cache-dir=.turbo
-
-promotions:
-  - name: Deploy
-    pipeline_file: deploy.yml
-    auto_promote_on:
-      - result: passed
-        branch:
-          - main
-          - dev
-          - stage
