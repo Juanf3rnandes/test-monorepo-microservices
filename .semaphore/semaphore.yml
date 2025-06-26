@@ -8,11 +8,11 @@ agent:
 
 blocks:
   - name: Setup
+    when:
+      event:
+        - pull_request
+        - push
     task:
-      when:
-        event:
-          - pull_request
-          - push
       env_vars:
         - name: TURBO_API
           value: "<opcional: se usar Remote Caching>"
@@ -36,11 +36,11 @@ blocks:
             - cache store turbo-cache-$(checksum turbo.json) .turbo
 
   - name: Test
+    when:
+      event:
+        - pull_request
+        - push
     task:
-      when:
-        event:
-          - pull_request
-          - push
       jobs:
         - name: Run tests
           commands:
