@@ -8,10 +8,6 @@ agent:
 
 blocks:
   - name: Setup
-    when:
-      event:
-        - pull_request
-        - push
     task:
       env_vars:
         - name: TURBO_API
@@ -36,10 +32,6 @@ blocks:
             - cache store turbo-cache-$(checksum turbo.json) .turbo
 
   - name: Test
-    when:
-      event:
-        - pull_request
-        - push
     task:
       jobs:
         - name: Run tests
